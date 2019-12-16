@@ -10,26 +10,26 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Login = () => {
+const Register = () => {
   const classes = useStyles();
-  const [loginCredentials, setLoginCredentials] = useState([]);
+  const [registerCredentials, setRegisterCredentials] = useState([]);
 
-  const handleLogin = event => {
+  const handleRegister = event => {
     event.preventDefault();
-    console.log(loginCredentials);
+    console.log(registerCredentials);
   };
 
   const handleChange = event => {
-    setLoginCredentials({
-      ...loginCredentials,
+    setRegisterCredentials({
+      ...registerCredentials,
       [event.target.name]: event.target.value
     });
   };
 
   return (
     <Container maxWidth={"sm"}>
-      <h1>Log In</h1>
-      <form onSubmit={handleLogin}>
+      <h1>Register</h1>
+      <form onSubmit={handleRegister}>
         <TextField
           required
           autoFocus
@@ -63,7 +63,7 @@ const Login = () => {
             color={"primary"}
             type="submit"
           >
-            Login
+            Register
           </Button>
           <Button
             fullWidth
@@ -71,9 +71,9 @@ const Login = () => {
             margin={"normal"}
             variant={"contained"}
             color={"secondary"}
-            href={"/register"}
+            href="/"
           >
-            Register
+            Login
           </Button>
         </div>
       </form>
@@ -81,4 +81,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
