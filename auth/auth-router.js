@@ -2,7 +2,21 @@ const bcrypt = require('bcryptjs');
 const router = require('express').Router();
 const Users = require('../users/users-model');
 
-router.post('/register', (req, res) => {
+function validateUserCredentials(req, res, next) {
+  if (Object.keys(req.body).length === 0) {
+    res.status(400).json({error: 'No information was passed into the body.'});
+  } else {
+    if (!req.body.username) {
+      res.status(400).json({error: 'Please provide a username.'});
+    } else if (!req.body.password) {
+      res.status(400).json({error: 'Please provide a password.'});
+    } else {
+      next();
+    }
+  }
+}
+
+router.post('/register', validateUserCredentials, (req, res) => {
   let user = req.body;
 
   const hash = bcrypt.hashSync(user.password, 12);
@@ -18,7 +32,7 @@ router.post('/register', (req, res) => {
     });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', validateUserCredentials, (req, res) => {
   let {username, password} = req.body;
   console.log(req.body);
 
