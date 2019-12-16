@@ -16,21 +16,44 @@ function validateUserCredentials(req, res, next) {
   }
 }
 
-router.post('/register', validateUserCredentials, (req, res) => {
-  let user = req.body;
+function userAlreadyExists(req, res, next) {
+  let username = req.body.username;
 
-  const hash = bcrypt.hashSync(user.password, 12);
-  user.password = hash;
-
-  Users.addUser(user)
+  Users.findUserBy({username})
     .then(response => {
-      res.status(201).json(response);
+      if (response) {
+        res.status(400).json({error: 'That username already exists.'});
+      } else {
+        next();
+      }
     })
     .catch(error => {
       console.log(error);
-      res.status(500).json({error: 'Unable to create a new user.'});
+      res
+        .status(500)
+        .json({error: 'Unable to find the user with the username provided.'});
     });
-});
+}
+
+router.post(
+  '/register',
+  [userAlreadyExists, validateUserCredentials],
+  (req, res) => {
+    let user = req.body;
+
+    const hash = bcrypt.hashSync(user.password, 12);
+    user.password = hash;
+
+    Users.addUser(user)
+      .then(response => {
+        res.status(201).json(response);
+      })
+      .catch(error => {
+        console.log(error);
+        res.status(500).json({error: 'Unable to create a new user.'});
+      });
+  },
+);
 
 router.post('/login', validateUserCredentials, (req, res) => {
   let {username, password} = req.body;
