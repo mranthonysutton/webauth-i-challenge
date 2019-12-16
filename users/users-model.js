@@ -2,12 +2,15 @@ const db = require('../data/db-config');
 
 module.exports = {
   addUser,
+  findUserBy,
+  allUsers,
 };
 
 function findUserBy(filter) {
   return db('users')
     .select('id', 'username', 'password')
-    .where(filter);
+    .where(filter)
+    .first();
 }
 
 function addUser(userData) {
@@ -18,4 +21,8 @@ function addUser(userData) {
 
       return findUserBy({id});
     });
+}
+
+function allUsers() {
+  return db('users');
 }

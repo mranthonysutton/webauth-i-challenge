@@ -18,4 +18,25 @@ router.post('/register', (req, res) => {
     });
 });
 
+router.post('/login', (req, res) => {
+  let {username, password} = req.body;
+  console.log(req.body);
+
+  Users.findUserBy({username})
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(password, user.password)) {
+        res.status(200).json(user);
+      } else {
+        res.status(401).json({message: 'Invalid credentials were provided.'});
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({
+        errorMessage: 'Unable to find the user by the username provided.',
+      });
+    });
+});
+
 module.exports = router;
