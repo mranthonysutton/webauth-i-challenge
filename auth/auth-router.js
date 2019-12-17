@@ -57,12 +57,13 @@ router.post(
 
 router.post('/login', validateUserCredentials, (req, res) => {
   let {username, password} = req.body;
-  console.log(req.body);
 
   Users.findUserBy({username})
     .first()
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
+        // saves a session for the user credentials
+        req.session.user = user;
         res.status(200).json(user);
       } else {
         res.status(401).json({message: 'Invalid credentials were provided.'});
@@ -74,6 +75,23 @@ router.post('/login', validateUserCredentials, (req, res) => {
         errorMessage: 'Unable to find the user by the username provided.',
       });
     });
+});
+
+router.get('/logout', (req, res) => {
+  // check if a sessions exists so that it can be destroyed
+  if (req.session) {
+    // If their was an error while destroying the session, let the user no, if not, provide them with a success message
+    req.session.destroy(error => {
+      if (error) {
+        res.status(500).json({error: 'Their was an error logging you out.'});
+      } else {
+        res.status(200).json({message: 'You have been logged out.'});
+      }
+    });
+    // If no session exists, just end the request
+  } else {
+    res.status(200).end();
+  }
 });
 
 module.exports = router;
