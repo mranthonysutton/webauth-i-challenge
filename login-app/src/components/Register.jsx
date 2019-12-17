@@ -18,12 +18,12 @@ const Register = props => {
   const handleRegister = event => {
     event.preventDefault();
     axiosWithAuth()
-      .post('api/register', registerCredentials)
+      .post('api/auth/register', registerCredentials)
       .then(response => {
         console.log(response.data);
         props.history.push('/users');
       })
-      .catch(error => console.log(error));
+      .catch(error => console.log(error.response.data.error));
   };
 
   const handleChange = event => {
